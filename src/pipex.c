@@ -3,17 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 15:44:42 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/10 18:23:57 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/05/13 22:44:18 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-cmd_get(char *cmd)
+char	**cmd_get(char *cmd)
 {
+	char	**split_cmd;
+	
+	split_cmd = ft_split(cmd, " ");
+	if (!split_cmd || !split_cmd[0])
+	{
+		ft_putstr_fd("Command not found: ", 2);
+		ft_putendl_fd(cmd, 2);
+		free(split_cmd);
+		exit();
+	}
+	return (split_cmd);
 }
 
 static void	child_p0(int fd[2], char **av, char **env)
@@ -67,7 +78,7 @@ static void	child_p1(int fd[2], char **av, char **env)
 		exit(EXIT_FAILURE);
 	}
 	close(fd[0]);
-	// ft_execute();
+	ft_execute(cmd_get(av[3]), env);
 }
 
 int	main(int ac, char **av, char **env)
@@ -89,5 +100,9 @@ int	main(int ac, char **av, char **env)
 		child_p1(pipe_fd, av, env);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
-	//
+	while (*env)
+	{
+		printf("%s\n", *env);
+		env++;
+	}
 }
